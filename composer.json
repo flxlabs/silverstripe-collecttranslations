@@ -1,0 +1,23 @@
+{
+	"name": "flxlabs/silverstripe-collecttranslations",
+	"description": "Adds a task for collecting and merging all translations from template and code files.",
+	"type": "silverstripe-module",
+	"homepage": "http://github.com/flxlabs/silverstripe-collecttranslations",
+	"keywords": ["silverstripe", "translations", "collect", "task"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Marco Crespi",
+			"email": "mrc@flxlabs.com"
+		}
+	],
+	"support": {
+		"issues": "http://github.com/flxlabs/silverstripe-collecttranslations/issues"
+	},
+	"require": {
+		"silverstripe/framework": "~3.1"
+	},
+	"extra": {
+		"installer-name": "collecttranslations"
+	}
+}
