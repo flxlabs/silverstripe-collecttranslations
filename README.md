@@ -1,4 +1,4 @@
-#Collect Translations Task
+# Collect Translations Task
 
 Collects SilverStripe translations from template and code files.
 
