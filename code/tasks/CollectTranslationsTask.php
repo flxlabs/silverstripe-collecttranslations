@@ -18,13 +18,13 @@ class CollectTranslationsTask extends BuildTask {
     			<td><b>verbose</b></td>
     			<td>1<br>0</td>
     			<td>Show which files are being processed and other debug info</td>
-    			<td><a href="CollectTranslationsTask?verbose=1">verbose=1</a></td>
+    			<td><a href="tasks/CollectTranslationsTask?verbose=1">verbose=1</a></td>
     		</tr>
     		<tr>
     			<td><b>compare</b></td>
     			<td>[lang]</td>
     			<td>Compare to an existing language file (e.g. "de")</td>
-    			<td><a href="CollectTranslationsTask?compare=de">compare=de</a></td>
+    			<td><a href="tasks/CollectTranslationsTask?compare=de">compare=de</a></td>
     		</tr>
  		</table>';
 
