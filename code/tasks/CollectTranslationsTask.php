@@ -107,13 +107,26 @@ class CollectTranslationsTask extends BuildTask {
                     $pos = mb_strpos($fl, "_t(");
                     if ($pos !== false) {
                         $keyEndPos = mb_strpos($fl, ",", $pos + 3);
+                        if ($keyEndPos === false) {
+                            $keyEndPos = mb_strpos($fl, ")", $pos + 3);
+                            if ($keyEndPos === false) {
+                                var_dump(array(
+                                    "file" => $file->getPathName(),
+                                    "line" => trim(mb_ereg_replace("\n", "", $fl)),
+                                    "lineNr" => $fli + 1,
+                                    "info" => "Skipping because key end could not be found",
+                                ));
+                                continue;
+                            }
+                        }
+
                         $key = mb_substr($fl, $pos + 3, $keyEndPos - $pos - 3);
                         $endPos = mb_strpos($fl, ",", $keyEndPos + 1);
                         if ($endPos === false) $endPos = mb_strpos($fl, ")", $keyEndPos + 1);
                         $value = mb_substr($fl, $keyEndPos + 1, $endPos - $keyEndPos - 1);
 
-                        $key = mb_ereg_replace("\"", "", $key);
-                        $value = mb_ereg_replace("\"", "", $value);
+                        $key = mb_ereg_replace("'", "", mb_ereg_replace("\"", "", $key));
+                        $value = mb_ereg_replace("'", "", mb_ereg_replace("\"", "", $value));
 
                         if (mb_strpos($key, "$") !== false) {
                             var_dump(array(
@@ -134,7 +147,6 @@ class CollectTranslationsTask extends BuildTask {
                        var_dump(array(
                             "file" => $file->getPathName(),
                             "line" => trim(mb_ereg_replace("\n", "", $fl)),
-                            "line" => $fl,
                             "lineNr" => $fli + 1,
                             "path" => $path,
                             "value" => $value,
