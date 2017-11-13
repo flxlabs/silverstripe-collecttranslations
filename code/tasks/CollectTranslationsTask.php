@@ -4,6 +4,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class CollectTranslationsTask extends BuildTask {
 	
+	protected static $rgxTemplateLine = 
+		"/<%t\s([\w.]*)\s?(?:['\"](.*?)['\"])?[\w$=. ]*\s?%>/iu";
 	protected $title = 'Collect Translations Task';
 
 	protected $description = '
@@ -93,15 +95,30 @@ class CollectTranslationsTask extends BuildTask {
 				unset($path);
 				unset($value);
 
-				// Check for the starting translation marker
+				// Check for the starting template translation marker
 				$pos = mb_strpos($fl, "<%t");
 				if ($pos !== false) {
-					// Extract the translation part, and split it into key and default value
-					$data = substr($fl, $pos + 4, mb_strpos($fl, "%>", $pos + 4) - $pos - 5);
-					$splits = array_values(array_filter(mb_split(" ", $data)));
-					$path = array_values(array_filter(mb_split("\.", $splits[0])));
-					array_splice($splits, 0, 1);
-					$value = mb_ereg_replace("\"", "", implode(" ", $splits));
+					$in = mb_substr($fl, $pos);
+
+					// Iterate over multiple translations in one line
+					while ($pos !== false) {
+						// Extract the translation part, and split it into key and default value
+						preg_match(self::$rgxTemplateLine, $in, $matches);
+						if (count($matches) < 2) {
+							var_dump(array(
+								"file" => $file->getPathName(),
+								"line" => trim(mb_ereg_replace("\n", "", $fl)),
+								"lineNr" => $fli + 1,
+								"info" => "Skipping because key could not be found",
+							));
+						} else {
+							$path = array_values(mb_split("\.", $matches[1]));
+							$value = count($matches) > 2 ? $matches[2] : "";
+						}
+
+						$in = mb_substr($in, $pos + 3);
+						$pos = mb_strpos($in, "<%t");
+					}
 				} else {
 					// Check for translations using the PHP syntax
 					$pos = mb_strpos($fl, "_t(");
