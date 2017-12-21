@@ -145,6 +145,20 @@ class CollectTranslationsTask extends BuildTask {
 
 		self::ksortRecursive($arr);
 
+		echo self::$styleSheet;
+		echo self::$javascript;
+
+		if (count($vars) > 0) {
+			echo "<b>The following variables were found, make sure to include";
+			echo "all possible values as entries in the translation file aswell:</b>";
+			echo "<table><thead><tr><th>Variable</th><th>File</th>";
+			echo "<th>Line #</th><th>Line</th></thead><tbody>";
+			self::renderVariables($vars);
+			echo "</tbody></table><br><br>";
+		}
+
+		echo "<button onclick='toggleCopy()'>Toggle copy mode</button><br><br>";
+
 		$compare = $request->getVar("compare");
 		if ($compare) {
 			$new = array($compare => $arr);
@@ -155,29 +169,18 @@ class CollectTranslationsTask extends BuildTask {
 
 			self::ksortRecursive($new);
 
-			echo self::$styleSheet;
-			echo self::$javascript;
-
-			if (count($vars) > 0) {
-				echo "<b>The following variables were found, make sure to include";
-				echo "all possible values as entries in the translation file aswell:</b>";
-				echo "<table><thead><tr><th>Variable</th><th>File</th>";
-				echo "<th>Line #</th><th>Line</th></thead><tbody>";
-				self::renderVariables($vars);
-				echo "</tbody></table><br><br>";
-			}
-
 			echo "<button onclick='toggleDeleted()'>Toggle deleted elements</button><br><br>";
-			echo "<button onclick='toggleCopy()'>Toggle copy mode</button><br><br>";
 			
 			echo "<div class='code'>";
 			echo self::render($new);
 			echo "</div>";
 		} else {
 			$locale = mb_substr(i18n::get_locale(), 0, 2);
-			$orig = array($locale => $arr);
+			$new = array($locale => $arr);
 
-			echo "<div class='code'>" . htmlentities(Yaml::dump($orig, 10, 2)) . "</div>";
+			echo "<div class='code'>";
+			echo self::render($new);
+			echo "</div>";
 		}
 	}
 
